@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 import json
 import math
 from db import conn, cursor
@@ -9,6 +10,24 @@ from config import OPENAI_API_KEY
 client_llm = OpenAI(api_key=OPENAI_API_KEY)
 
 app = FastAPI()
+
+# ---- CORS ----
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    # "https://your-frontend-domain.com",  # add your deployed frontend here
+    # For quick local testing only, you can use "*" (not recommended for production)
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# ---------------
 
 def fix_nan(obj):
     if isinstance(obj, float) and math.isnan(obj):
